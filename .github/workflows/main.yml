@@ -1,4 +1,6 @@
 on:
+  schedule:
+  - cron: "*/1440 * * * *"
   workflow_dispatch:
   
 jobs:
