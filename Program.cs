@@ -337,7 +337,7 @@ public class Program
         {
             // It's the deluxe edition
             // This is weird and hacky so I just hope they don't actually change their prices
-            // Unfortunately the Steam API doesn't report that which offer went on sale and just shows whatever last changed
+            // Unfortunately the Steam API doesn't report which offer went on sale (regular vs deluxe) and instead just returns whatever one last changed (maybe, seems to be the case so far)
             fileName = $"{appid}_DELUXE_price.json";
             appName = "DREDGE - DELUXE EDITION";
         }
