@@ -42,7 +42,7 @@ public class Program
 	const string DESCRIPTION = "description";
 	const string COMMON = "common";
 
-    const int APP_ID = 1562430;
+    const int DREDGE_APP_ID = 1562430;
     const string APP_NAME = "DREDGE";
 
     const int APP_ID_DLC_1 = 2561440;
@@ -102,7 +102,7 @@ public class Program
 
 			Console.WriteLine($"Logged into Steam.");
 
-			await appHandler.PICSGetProductInfo(new SteamApps.PICSRequest(APP_ID), null, false);
+			await appHandler.PICSGetProductInfo(new SteamApps.PICSRequest(DREDGE_APP_ID), null, false);
 		}
 
 		void OnPICSProductInfo(SteamApps.PICSProductInfoCallback callback)
@@ -312,7 +312,7 @@ public class Program
 				}
 			}
 
-            CheckPrice(APP_ID, APP_NAME, webhook);
+            CheckPrice(DREDGE_APP_ID, APP_NAME, webhook);
             CheckPrice(APP_ID_DLC_1, APP_NAME_DLC_1, webhook);
 
             steamUser.LogOff();
@@ -331,14 +331,14 @@ public class Program
         var currentPrice = (int)priceOverview["final"];
         var discountPercent = (int)priceOverview["discount_percent"];
 
-        var fileName = $"{APP_ID}_price.json";
+        var fileName = $"{appid}_price.json";
 
-        if (appid == APP_ID && initialPrice == 3499)
+        if (appid == DREDGE_APP_ID && initialPrice == 3499)
         {
             // It's the deluxe edition
             // This is weird and hacky so I just hope they don't actually change their prices
             // Unfortunately the Steam API doesn't report that which offer went on sale and just shows whatever last changed
-            fileName = $"{APP_ID}_DELUXE_price.json";
+            fileName = $"{appid}_DELUXE_price.json";
             appName = "DREDGE - DELUXE EDITION";
         }
 
