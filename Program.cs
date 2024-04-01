@@ -326,6 +326,8 @@ public class Program
 
         var jObject = JObject.Parse(json);
 
+        var footer = "Steam sale tracker";
+
         var priceOverview = jObject[$"{appid}"]["data"]["price_overview"];
         var initialPrice = (int)priceOverview["initial"];
         var currentPrice = (int)priceOverview["final"];
@@ -339,7 +341,7 @@ public class Program
             // This is weird and hacky so I just hope they don't actually change their prices
             // Unfortunately the Steam API doesn't report which offer went on sale (regular vs deluxe) and instead just returns whatever one last changed (maybe, seems to be the case so far)
             fileName = $"{appid}_DELUXE_price.json";
-            appName = "DREDGE - DELUXE EDITION";
+            appName = "DREDGE - Deluxe Edition";
         }
 
         var flagFileExists = true;
@@ -371,7 +373,7 @@ public class Program
                     Title = "Sale Started!",
                     Color = new DiscordColor(Color.LightBlue),
                     Description = $"{appName} is now on sale! From ${initialPrice / 100f:F2} to ${currentPrice / 100f:F2} ({discountPercent}% off).",
-                    Footer = new EmbedFooter() { Text = appName }
+                    Footer = new EmbedFooter() { Text = footer }
                 };
                 message.Embeds.Add(embed);
             }
@@ -382,7 +384,7 @@ public class Program
                     Title = "Sale Update",
                     Color = new DiscordColor(Color.LightBlue),
                     Description = $"The {appName} sale has increased! From ${oldPrice.currentPrice / 100f:F2} ({oldPrice.discountPercent}% off) to ${currentPrice / 100f:F2} ({discountPercent}% off).",
-                    Footer = new EmbedFooter() { Text = appName }
+                    Footer = new EmbedFooter() { Text = footer }
                 };
                 message.Embeds.Add(embed);
             }
@@ -393,7 +395,7 @@ public class Program
                     Title = "Sale Ended",
                     Color = new DiscordColor(Color.LightBlue),
                     Description = $"The {appName} sale has ended. Back to ${initialPrice / 100f:F2}.",
-                    Footer = new EmbedFooter() { Text = appName }
+                    Footer = new EmbedFooter() { Text = footer }
                 };
                 message.Embeds.Add(embed);
             }
@@ -404,7 +406,7 @@ public class Program
                     Title = "Sale Update",
                     Color = new DiscordColor(Color.LightBlue),
                     Description = $"The {appName} sale has decreased. From ${oldPrice.currentPrice / 100f:F2} ({oldPrice.discountPercent}% off) to ${currentPrice / 100f:F2} ({discountPercent}% off).",
-                    Footer = new EmbedFooter() { Text = appName }
+                    Footer = new EmbedFooter() { Text = footer }
                 };
                 message.Embeds.Add(embed);
             }
