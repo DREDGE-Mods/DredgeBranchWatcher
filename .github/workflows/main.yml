@@ -29,7 +29,7 @@ jobs:
         
       - name: Run program
         run: |
-          ./bin/Debug/net6.0/SteamAppBranchWatcher.exe '${{ secrets.STEAM_USERNAME }}' '${{ secrets.STEAM_PASSWORD }}' '${{ secrets.DISCORD_WEBHOOK }}' '${{ secrets.APPID }}'
+          ./bin/Debug/net6.0/SteamAppBranchWatcher.exe '${{ secrets.STEAM_USERNAME }}' '${{ secrets.STEAM_PASSWORD }}' '${{ secrets.DISCORD_WEBHOOK }}' '${{ secrets.DISCORD_SALE_WEBHOOK }}'
 
       - name: Commit and push changes
         run: |

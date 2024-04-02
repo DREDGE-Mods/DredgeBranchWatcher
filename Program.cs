@@ -54,6 +54,7 @@ public class Program
 		var user = args[0];
 		var pass = args[1];
 		var webhook = args[2];
+		var priceWebhook = args[3];
 
 		var steamClient = new SteamClient();
 		var manager = new CallbackManager(steamClient);
@@ -312,8 +313,8 @@ public class Program
 				}
 			}
 
-            CheckPrice(DREDGE_APP_ID, APP_NAME, webhook);
-            CheckPrice(APP_ID_DLC_1, APP_NAME_DLC_1, webhook);
+            CheckPrice(DREDGE_APP_ID, APP_NAME, priceWebhook);
+            CheckPrice(APP_ID_DLC_1, APP_NAME_DLC_1, priceWebhook);
 
             steamUser.LogOff();
 		}
