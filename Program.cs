@@ -384,7 +384,7 @@ public class Program
                 {
                     Title = "Sale Update",
                     Color = new DiscordColor(Color.LightBlue),
-                    Description = $"The {appName} sale has increased! From ${oldPrice.currentPrice / 100f:F2} ({oldPrice.discountPercent}% off) to ${currentPrice / 100f:F2} ({discountPercent}% off).",
+                    Description = $"The {appName.Replace("The ", string.Empty)} sale has increased! From ${oldPrice.currentPrice / 100f:F2} ({oldPrice.discountPercent}% off) to ${currentPrice / 100f:F2} ({discountPercent}% off).",
                     Footer = new EmbedFooter() { Text = footer }
                 };
                 message.Embeds.Add(embed);
@@ -395,7 +395,7 @@ public class Program
                 {
                     Title = "Sale Ended",
                     Color = new DiscordColor(Color.LightBlue),
-                    Description = $"The {appName} sale has ended. Back to ${initialPrice / 100f:F2}.",
+                    Description = $"The {appName.Replace("The ", string.Empty)} sale has ended. Back to ${initialPrice / 100f:F2}.",
                     Footer = new EmbedFooter() { Text = footer }
                 };
                 message.Embeds.Add(embed);
@@ -406,7 +406,7 @@ public class Program
                 {
                     Title = "Sale Update",
                     Color = new DiscordColor(Color.LightBlue),
-                    Description = $"The {appName} sale has decreased. From ${oldPrice.currentPrice / 100f:F2} ({oldPrice.discountPercent}% off) to ${currentPrice / 100f:F2} ({discountPercent}% off).",
+                    Description = $"The {appName.Replace("The ", string.Empty)} sale has decreased. From ${oldPrice.currentPrice / 100f:F2} ({oldPrice.discountPercent}% off) to ${currentPrice / 100f:F2} ({discountPercent}% off).",
                     Footer = new EmbedFooter() { Text = footer }
                 };
                 message.Embeds.Add(embed);
