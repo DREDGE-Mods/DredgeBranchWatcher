@@ -323,7 +323,7 @@ public class Program
 			}
 
             CheckPrice(DREDGE_APP_ID, APP_NAME, priceWebhook);
-            //CheckPrice(APP_ID_PREORDER, APP_NAME_PREORDER, priceWebhook);
+            CheckPrice(APP_ID_PREORDER, APP_NAME_PREORDER, priceWebhook);
             CheckPrice(APP_ID_BLACKSTONE, APP_NAME_BLACKSTONE, priceWebhook);
             CheckPrice(APP_ID_DLC_1, APP_NAME_DLC_1, priceWebhook);
             CheckPrice(APP_ID_DLC_2, APP_NAME_DLC_2, priceWebhook);
@@ -340,6 +340,13 @@ public class Program
         var jObject = JObject.Parse(json);
 
         var footer = "Steam sale tracker";
+
+        var success = (bool)jObject[$"{appid}"]["success"];
+        if (!success)
+        {
+            Console.WriteLine($"Failed to get any price for {appid}");
+            return;
+        }
 
         var priceOverview = jObject[$"{appid}"]["data"]["price_overview"];
         var initialPrice = (int)priceOverview["initial"];
