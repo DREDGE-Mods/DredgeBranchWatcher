@@ -42,6 +42,18 @@ public class Program
 	const string DESCRIPTION = "description";
 	const string COMMON = "common";
 
+    const int DREDGE_PACKAGE_ID = 824636;
+    const string PACKAGE_NAME = "DREDGE";
+
+    const int PACKAGE_ID_DELUXE = 899715;
+    const string PACKAGE_NAME_DELUXE = "DREDGE - Deluxe Edition";
+
+    const int PACKAGE_ID_DIGITAL_DELUXE = 1114568;
+    const string PACKAGE_NAME_DIGITAL_DELUXE = "DREDGE - Digital Deluxe Edition";
+
+    const int PACKAGE_ID_COMPLETE = 1093759;
+    const string PACKAGE_NAME_COMPLETE = "DREDGE - Complete Edition";
+
     const int DREDGE_APP_ID = 1562430;
     const string APP_NAME = "DREDGE";
 
@@ -322,17 +334,21 @@ public class Program
 				}
 			}
 
-            CheckPrice(DREDGE_APP_ID, APP_NAME, priceWebhook);
-            CheckPrice(APP_ID_PREORDER, APP_NAME_PREORDER, priceWebhook);
-            CheckPrice(APP_ID_BLACKSTONE, APP_NAME_BLACKSTONE, priceWebhook);
-            CheckPrice(APP_ID_DLC_1, APP_NAME_DLC_1, priceWebhook);
-            CheckPrice(APP_ID_DLC_2, APP_NAME_DLC_2, priceWebhook);
+            CheckPackagePrice(DREDGE_PACKAGE_ID, PACKAGE_NAME, priceWebhook);
+            CheckPackagePrice(PACKAGE_ID_DELUXE, PACKAGE_NAME_DELUXE, priceWebhook);
+            CheckPackagePrice(PACKAGE_ID_DIGITAL_DELUXE, PACKAGE_NAME_DIGITAL_DELUXE, priceWebhook);
+            CheckPackagePrice(PACKAGE_ID_COMPLETE, PACKAGE_NAME_COMPLETE, priceWebhook);
+            //CheckAppPrice(DREDGE_APP_ID, APP_NAME, priceWebhook);
+            CheckAppPrice(APP_ID_PREORDER, APP_NAME_PREORDER, priceWebhook);
+            CheckAppPrice(APP_ID_BLACKSTONE, APP_NAME_BLACKSTONE, priceWebhook);
+            CheckAppPrice(APP_ID_DLC_1, APP_NAME_DLC_1, priceWebhook);
+            CheckAppPrice(APP_ID_DLC_2, APP_NAME_DLC_2, priceWebhook);
 
             steamUser.LogOff();
 		}
 	}
 
-    private static void CheckPrice(int appid, string appName, string webhook)
+    private static void CheckAppPrice(int appid, string appName, string webhook)
     {
         // check for price update
         var json = new WebClient().DownloadString($"https://store.steampowered.com/api/appdetails?appids={appid}&cc=us&filters=price_overview");
@@ -355,15 +371,6 @@ public class Program
         Console.WriteLine($"{appName} ({appid}): {{initial: {initialPrice}, current: {currentPrice}, discountPercent: {discountPercent}}}");
 
         var fileName = $"{appid}_price.json";
-
-        if (appid == DREDGE_APP_ID && initialPrice == 3499)
-        {
-            // It's the deluxe edition
-            // This is weird and hacky so I just hope they don't actually change their prices
-            // Unfortunately the Steam API doesn't report which offer went on sale (regular vs deluxe) and instead just returns whatever one last changed (maybe, seems to be the case so far)
-            fileName = $"{appid}_DELUXE_price.json";
-            appName = "DREDGE - Deluxe Edition";
-        }
 
         var flagFileExists = true;
         if (!File.Exists(fileName))
@@ -427,6 +434,101 @@ public class Program
                     Title = "Sale Update",
                     Color = new DiscordColor(Color.LightBlue),
                     Description = $"The {appName.Replace("The ", string.Empty)} sale has decreased. From ${oldPrice.currentPrice / 100f:F2} ({oldPrice.discountPercent}% off) to ${currentPrice / 100f:F2} ({discountPercent}% off).",
+                    Footer = new EmbedFooter() { Text = footer }
+                };
+                message.Embeds.Add(embed);
+            }
+
+            hook.SendAsync(message);
+        }
+    }
+
+    private static void CheckPackagePrice(int packageid, string packageName, string webhook)
+    {
+        // check for price update
+        var json = new WebClient().DownloadString($"https://store.steampowered.com/api/packagedetails?packageids={packageid}&cc=us");
+
+        var jObject = JObject.Parse(json);
+
+        var footer = "Steam sale tracker";
+
+        var success = (bool)jObject[$"{packageid}"]["success"];
+        if (!success)
+        {
+            Console.WriteLine($"Failed to get any price for {packageName} ({packageid})");
+            return;
+        }
+
+        var priceOverview = jObject[$"{packageid}"]["data"]["price"];
+        var initialPrice = (int)priceOverview["initial"];
+        var currentPrice = (int)priceOverview["final"];
+        var discountPercent = (int)priceOverview["discount_percent"];
+        Console.WriteLine($"{packageName} ({packageid}): {{initial: {initialPrice}, current: {currentPrice}, discountPercent: {discountPercent}}}");
+
+        var fileName = $"{packageid}_price.json";
+
+        var flagFileExists = true;
+        if (!File.Exists(fileName))
+        {
+            flagFileExists = false;
+            File.WriteAllText(fileName, JsonConvert.SerializeObject(new PriceInfo()));
+        }
+
+        var oldPrice = JsonConvert.DeserializeObject<PriceInfo>(File.ReadAllText(fileName));
+        var isOnSale = flagFileExists && (currentPrice != oldPrice.currentPrice);
+
+        var newPrice = new PriceInfo() { currentPrice = currentPrice, initialPrice = initialPrice, discountPercent = discountPercent };
+        File.WriteAllText(fileName, JsonConvert.SerializeObject(newPrice));
+
+        if (isOnSale)
+        {
+            var hook = new DiscordWebhook
+            {
+                Uri = new Uri(webhook)
+            };
+
+            var message = new DiscordMessage();
+
+            if (oldPrice.discountPercent == 0)
+            {
+                var embed = new DiscordEmbed()
+                {
+                    Title = "Sale Started!",
+                    Color = new DiscordColor(Color.LightBlue),
+                    Description = $"{packageName} is now on sale! From ${initialPrice / 100f:F2} to ${currentPrice / 100f:F2} ({discountPercent}% off).",
+                    Footer = new EmbedFooter() { Text = footer }
+                };
+                message.Embeds.Add(embed);
+            }
+            else if (newPrice.discountPercent > oldPrice.discountPercent)
+            {
+                var embed = new DiscordEmbed()
+                {
+                    Title = "Sale Update",
+                    Color = new DiscordColor(Color.LightBlue),
+                    Description = $"The {packageName.Replace("The ", string.Empty)} sale has increased! From ${oldPrice.currentPrice / 100f:F2} ({oldPrice.discountPercent}% off) to ${currentPrice / 100f:F2} ({discountPercent}% off).",
+                    Footer = new EmbedFooter() { Text = footer }
+                };
+                message.Embeds.Add(embed);
+            }
+            else if (newPrice.discountPercent == 0)
+            {
+                var embed = new DiscordEmbed()
+                {
+                    Title = "Sale Ended",
+                    Color = new DiscordColor(Color.LightBlue),
+                    Description = $"The {packageName.Replace("The ", string.Empty)} sale has ended. Back to ${initialPrice / 100f:F2}.",
+                    Footer = new EmbedFooter() { Text = footer }
+                };
+                message.Embeds.Add(embed);
+            }
+            else if (newPrice.discountPercent < oldPrice.discountPercent)
+            {
+                var embed = new DiscordEmbed()
+                {
+                    Title = "Sale Update",
+                    Color = new DiscordColor(Color.LightBlue),
+                    Description = $"The {packageName.Replace("The ", string.Empty)} sale has decreased. From ${oldPrice.currentPrice / 100f:F2} ({oldPrice.discountPercent}% off) to ${currentPrice / 100f:F2} ({discountPercent}% off).",
                     Footer = new EmbedFooter() { Text = footer }
                 };
                 message.Embeds.Add(embed);
