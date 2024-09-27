@@ -352,6 +352,7 @@ public class Program
         var initialPrice = (int)priceOverview["initial"];
         var currentPrice = (int)priceOverview["final"];
         var discountPercent = (int)priceOverview["discount_percent"];
+        Console.WriteLine($"{appid}: {{initial: {initialPrice}, current: {currentPrice}, discountPercent: {discountPercent}}}");
 
         var fileName = $"{appid}_price.json";
 
