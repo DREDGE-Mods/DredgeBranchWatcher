@@ -45,8 +45,17 @@ public class Program
     const int DREDGE_APP_ID = 1562430;
     const string APP_NAME = "DREDGE";
 
+    const int APP_ID_PREORDER = 2198600;
+    const string APP_NAME_PREORDER = "Custom Rod";
+
+    const int APP_ID_BLACKSTONE = 2104240;
+    const string APP_NAME_BLACKSTONE = "Blackstone Key";
+
     const int APP_ID_DLC_1 = 2561440;
     const string APP_NAME_DLC_1 = "The Pale Reach";
+
+    const int APP_ID_DLC_2 = 2561450;
+    const string APP_NAME_DLC_2 = "The Iron Rig";
 
 
     public static void Main(params string[] args)
@@ -314,7 +323,10 @@ public class Program
 			}
 
             CheckPrice(DREDGE_APP_ID, APP_NAME, priceWebhook);
+            //CheckPrice(APP_ID_PREORDER, APP_NAME_PREORDER, priceWebhook);
+            CheckPrice(APP_ID_BLACKSTONE, APP_NAME_BLACKSTONE, priceWebhook);
             CheckPrice(APP_ID_DLC_1, APP_NAME_DLC_1, priceWebhook);
+            CheckPrice(APP_ID_DLC_2, APP_NAME_DLC_2, priceWebhook);
 
             steamUser.LogOff();
 		}
