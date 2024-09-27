@@ -344,7 +344,7 @@ public class Program
         var success = (bool)jObject[$"{appid}"]["success"];
         if (!success)
         {
-            Console.WriteLine($"Failed to get any price for {appid}");
+            Console.WriteLine($"Failed to get any price for {appName} ({appid})");
             return;
         }
 
@@ -352,7 +352,7 @@ public class Program
         var initialPrice = (int)priceOverview["initial"];
         var currentPrice = (int)priceOverview["final"];
         var discountPercent = (int)priceOverview["discount_percent"];
-        Console.WriteLine($"{appid}: {{initial: {initialPrice}, current: {currentPrice}, discountPercent: {discountPercent}}}");
+        Console.WriteLine($"{appName} ({appid}): {{initial: {initialPrice}, current: {currentPrice}, discountPercent: {discountPercent}}}");
 
         var fileName = $"{appid}_price.json";
 
