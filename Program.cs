@@ -5,7 +5,7 @@ using SteamKit2;
 using System.Drawing;
 using System.Net;
 
-namespace OuterWildsBranchWatcher;
+namespace DredgeBranchWatcher;
 
 public class BranchInfo
 {
